@@ -14,14 +14,9 @@
 		playerScore: 0,
 		computerScore: 0,
 
-		increaseMoveCounter: function() {
-			game.moveCounter++
-		},
-
 		init: function() {
 			this.cacheDom();
 			this.bindEvents();
-
 		},
 
 		cacheDom: function() {
@@ -38,6 +33,12 @@
 			this.gameBoard.addEventListener('contextmenu', function(event) {
 				event.preventDefault();
 			});
+            this.gameBoard.addEventListener('dblclick', function(event) {
+				event.preventDefault();
+			});
+			this.gameBoard.addEventListener('contextmenu', function(event) {
+				event.preventDefault();
+			});
 			this.startGameButton.addEventListener('click', game.startGame);
 
 		},
@@ -48,12 +49,7 @@
 				tile.addEventListener('click', game.playerMove);
 
 			});
-			this.gameBoard.addEventListener('dblclick', function(event) {
-				event.preventDefault();
-			});
-			this.gameBoard.addEventListener('contextmenu', function(event) {
-				event.preventDefault();
-			});
+			
 		},
 
 		playerMove: function(event) {
@@ -72,11 +68,16 @@
 				console.log('Game over!', game.winner, 'player move function')
 				game.gameOver = true;
 				return;
+			} else if (game.isBoardFull() && !game.checkWinCondition()) {
+                game.computerMoveTimer(function() {
+                    game.gameMessage.textContent = 'Draw'     
+                })
+				return;
 			} else {
 				game.isPlayerTurn = false;
-				game.gameMessage.textContent = 'test'
 				game.computerMove();
 			}
+            
 
 		},
 
@@ -286,7 +287,10 @@
 				game.computerMove();
 			}
 
-			if (game.isBoardFull()) {
+			if (game.isBoardFull() && !game.checkWinCondition()) {
+                game.computerMoveTimer(function() {
+					game.gameMessage.textContent = 'Draw'
+				})
 				return;
 			}
 
